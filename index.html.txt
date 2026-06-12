@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Character Library</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:#090910;color:#E2DCF5;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;min-height:100vh}
+#app{display:flex;flex-direction:column;min-height:100vh}
+.hdr{display:flex;align-items:center;flex-wrap:wrap;gap:8px;padding:13px 20px;border-bottom:1px solid rgba(120,80,220,.16);background:rgba(120,80,220,.035);position:sticky;top:0;z-index:50}
+.logo{font-size:14px;font-weight:600;color:#B09EE8;letter-spacing:.04em}
+.hdr-sep{color:rgba(120,80,220,.3)}
+.hdr-name{font-size:14px;font-weight:600;color:#E2DCF5}
+.badge{background:rgba(120,80,220,.14);color:#A08AE0;border-radius:4px;padding:2px 7px;font-size:11px}
+.hdr-actions{margin-left:auto;display:flex;gap:7px;flex-wrap:wrap;align-items:center}
+.name-edit{background:#1C1C30;border:1px solid #7B5CF6;color:#E2DCF5;border-radius:6px;padding:4px 8px;font-size:14px;font-weight:600;outline:none;width:180px}
+.content{padding:22px 20px;flex:1}
+.search-row{display:flex;align-items:center;gap:12px;margin-bottom:22px}
+.srch{background:#111120;border:1px solid rgba(120,80,220,.2);color:#E2DCF5;border-radius:8px;padding:9px 12px;font-size:14px;outline:none;flex:1;max-width:380px}
+.srch::placeholder{color:#4E4A6A}
+.srch:focus{border-color:#7B5CF6}
+.cnt{font-size:12px;color:#4E4A6A}
+.char-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:13px}
+.char-card{background:#111120;border:1px solid rgba(120,80,220,.16);border-radius:11px;overflow:hidden;cursor:pointer;transition:border-color .14s,transform .12s,box-shadow .14s}
+.char-card:hover{border-color:#7B5CF6;transform:translateY(-2px);box-shadow:0 6px 20px rgba(120,80,220,.13)}
+.char-thumb{width:100%;aspect-ratio:3/4;object-fit:cover;display:block;background:#181828}
+.char-ph{width:100%;aspect-ratio:3/4;background:#181828;display:flex;align-items:center;justify-content:center;font-size:30px;opacity:.22;color:#fff}
+.char-info{padding:9px 11px}
+.char-name{font-size:13px;font-weight:600;color:#E2DCF5;margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.char-ct{font-size:11px;color:#4E4A6A}
+.img-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(195px,1fr));gap:16px}
+.img-card{background:#111120;border:1px solid rgba(120,80,220,.16);border-radius:10px;overflow:hidden}
+.img-hdr{padding:9px 11px 7px;display:flex;align-items:center;justify-content:space-between}
+.img-lbl{font-size:13px;font-weight:600;color:#E2DCF5;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.img-del{background:none;border:none;color:#4E4A6A;cursor:pointer;font-size:20px;line-height:1;padding:0 2px;margin-left:8px;flex-shrink:0;transition:color .1s}
+.img-del:hover{color:#F08080}
+.img-thumb{width:100%;display:block;max-height:320px;object-fit:cover;background:#181828}
+.img-err{height:100px;background:#181828;display:flex;align-items:center;justify-content:center;color:#4E4A6A;font-size:12px}
+.empty{text-align:center;color:#4E4A6A;padding:70px 20px}
+.empty-sym{font-size:40px;opacity:.3;margin-bottom:14px}
+.empty-t{font-size:15px;color:#9088C0;margin-bottom:5px}
+.empty-s{font-size:13px}
+.btn{cursor:pointer;border-radius:7px;font-size:13px;font-weight:500;padding:8px 14px;border:none;transition:opacity .12s;white-space:nowrap;line-height:1.4}
+.btn:hover:not(:disabled){opacity:.82}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.bp{background:#6D28D9;color:#fff}
+.bg{background:transparent;color:#7A70A8;border:1px solid rgba(120,80,220,.22)}
+.bg:hover:not(:disabled){color:#B8ADDF;border-color:rgba(120,80,220,.45);opacity:1}
+.bd{background:rgba(220,60,60,.1);color:#F08080;border:1px solid rgba(220,60,60,.22)}
+.bsuc{background:rgba(52,200,140,.1);color:#80DEB8;border:1px solid rgba(52,200,140,.22)}
+.bsm{padding:7px 11px;font-size:12px}
+.m-back{position:fixed;inset:0;background:rgba(0,0,0,.76);display:flex;align-items:center;justify-content:center;z-index:200;padding:16px}
+.modal{background:#111120;border:1px solid rgba(120,80,220,.28);border-radius:13px;padding:22px;width:100%;max-width:460px;box-shadow:0 24px 60px rgba(0,0,0,.7);max-height:90vh;overflow-y:auto}
+.m-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+.m-title{font-size:15px;font-weight:600;color:#E2DCF5}
+.m-x{background:none;border:none;color:#4E4A6A;cursor:pointer;font-size:22px;line-height:1;padding:0}
+.m-x:hover{color:#9088C0}
+.m-foot{display:flex;gap:8px;justify-content:flex-end;margin-top:18px}
+.field{margin-bottom:14px}
+.field label{display:block;font-size:11px;color:#5E5A80;margin-bottom:5px;text-transform:uppercase;letter-spacing:.05em}
+.inp{background:#0D0D1C;border:1px solid rgba(120,80,220,.2);color:#E2DCF5;border-radius:7px;padding:9px 11px;font-size:13px;outline:none;width:100%}
+.inp::placeholder{color:#4E4A6A}
+.inp:focus{border-color:#7B5CF6}
+textarea.inp{resize:vertical;min-height:110px;font-family:inherit;line-height:1.5}
+.tab-row{display:flex;gap:3px;background:#0D0D1C;border-radius:7px;padding:3px;margin-bottom:16px}
+.tab{flex:1;background:none;border:none;color:#5E5A80;cursor:pointer;padding:7px 5px;border-radius:5px;font-size:12px;font-weight:500;transition:background .12s,color .12s}
+.tab.on{background:rgba(120,80,220,.18);color:#C4B5FD}
+.dz{border:1.5px dashed rgba(120,80,220,.35);border-radius:10px;padding:28px 16px;text-align:center;cursor:pointer;transition:border-color .15s,background .15s;margin-bottom:14px}
+.dz:hover,.dz.over{border-color:#7B5CF6;background:rgba(120,80,220,.06)}
+.dz-icon{font-size:22px;opacity:.4;margin-bottom:9px}
+.dz-txt{font-size:13px;color:#7A70A8;line-height:1.6}
+.dz-hint{font-size:11px;color:#4E4A6A;margin-top:5px}
+.prev-wrap{border-radius:8px;overflow:hidden;margin-bottom:12px}
+.prev-wrap img,.url-prev img{width:100%;max-height:180px;object-fit:cover;display:block}
+.url-prev{border-radius:7px;overflow:hidden;background:#0D0D1C;margin-top:10px}
+.bulk-note{font-size:12px;color:#4E4A6A;margin-top:5px}
+.bulk-ct{font-size:12px;color:#A08AE0;margin-top:4px}
+</style>
+</head>
+<body>
+<input type="file" id="file-input" accept="image/*" style="display:none">
+<div id="app"></div>
+<div id="modal-root"></div>
+<script>
+/* CHARLIB_DATA_START */
+var __D__ = {"v":0,"d":{}};
+/* CHARLIB_DATA_END */
+
+// ── STATE ──────────────────────────────────────────
+var chars = {};
+var pg = null, q = '', _en = false, _env = '';
+var _mo = null, _mt = 'device', _mi = '', _mu = '', _mb = '', _ml = '';
+var _mph = null, _tmr = null;
+
+// ── INIT ───────────────────────────────────────────
+function init() {
+  loadData();
+  document.getElementById('file-input').addEventListener('change', function(e) {
+    handleImgFile(e.target.files[0]);
+    e.target.value = '';
+  });
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape' && _mo) closeMod();
+  });
+  render();
+}
+
+// ── DATA ───────────────────────────────────────────
+function genId() { return Date.now().toString(36) + Math.random().toString(36).slice(2,8); }
+
+function loadData() {
+  try {
+    var s = localStorage.getItem('charlib');
+    if (s) {
+      var p = JSON.parse(s);
+      if ((p.v||0) >= (__D__.v||0)) { chars = p.d||{}; return; }
+    }
+  } catch(e) {}
+  chars = JSON.parse(JSON.stringify(__D__.d||{}));
+  save();
+}
+
+function save() {
+  try { localStorage.setItem('charlib', JSON.stringify({v:Date.now(),d:chars})); }
+  catch(e) { console.warn('Storage full',e); }
+}
+
+// ── UTILS ──────────────────────────────────────────
+function esc(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function getFiltered() {
+  var lq = q.toLowerCase();
+  return Object.values(chars).filter(function(c){return c.name.toLowerCase().indexOf(lq)>-1;})
+    .sort(function(a,b){return a.name.localeCompare(b.name);});
+}
+
+// ── IMAGE UTILS ────────────────────────────────────
+function compressImg(src) {
+  return new Promise(function(res) {
+    var img = new Image();
+    img.onload = function() {
+      var r = Math.min(1, 1000/img.width);
+      var cv = document.createElement('canvas');
+      cv.width = Math.round(img.width*r); cv.height = Math.round(img.height*r);
+      cv.getContext('2d').drawImage(img,0,0,cv.width,cv.height);
+      res(cv.toDataURL('image/jpeg',0.72));
+    };
+    img.onerror = function(){res(src);};
+    img.src = src;
+  });
+}
+function readFile(file) {
+  return new Promise(function(res,rej) {
+    var fr = new FileReader();
+    fr.onload = function(e){res(e.target.result);}; fr.onerror = rej;
+    fr.readAsDataURL(file);
+  });
+}
+async function handleImgFile(file) {
+  if (!file||!file.type.startsWith('image/')) return;
+  try { var raw = await readFile(file); _mi = await compressImg(raw); _mt='device'; renderModal(); } catch(e){}
+}
+
+// ── RENDER ─────────────────────────────────────────
+function render() {
+  var cur = pg ? chars[pg] : null;
+  var fl = pg ? [] : getFiltered();
+  var aid = document.activeElement ? document.activeElement.id : null;
+  var ac = aid ? (document.getElementById(aid)||{}).selectionStart : null;
+  document.getElementById('app').innerHTML =
+    '<div class="hdr">'+buildHdr(cur)+'</div>'+
+    '<div class="content">'+(pg ? buildDetail(cur) : buildGrid(fl))+'</div>';
+  setLazySrcs();
+  if (aid) {
+    var el = document.getElementById(aid);
+    if (el && ac!=null) { el.focus(); try{el.setSelectionRange(ac,ac);}catch(e){} }
+  }
+}
+function setLazySrcs() {
+  document.querySelectorAll('[data-s]').forEach(function(el){
+    el.src = el.getAttribute('data-s'); el.removeAttribute('data-s');
+  });
+}
+
+function buildHdr(cur) {
+  var h = '';
+  if (pg) h += '<button class="btn bg bsm" onclick="goBack()">&#8592; Back</button>';
+  if (!pg) {
+    h += '<span class="logo">Character Library</span>';
+  } else {
+    h += '<span class="logo" style="color:#4E4A6A">Library</span><span class="hdr-sep">/</span>';
+    if (_en) {
+      h += '<input id="en-i" class="name-edit" value="'+esc(_env)+'" oninput="_env=this.value" onkeydown="enKey(event)">';
+      h += '<button class="btn bsuc bsm" onclick="saveName()">Save</button>';
+      h += '<button class="btn bg bsm" onclick="_en=false;render()">Cancel</button>';
+    } else {
+      h += '<span class="hdr-name">'+esc(cur?cur.name:'')+'</span>';
+      h += '<button class="btn bg bsm" onclick="startEn()" title="Rename">&#9998;</button>';
+    }
+    h += '<span class="badge">'+(cur?cur.images.length:0)+' images</span>';
+  }
+  h += '<div class="hdr-actions">';
+  if (pg&&cur) {
+    h += '<button id="md-btn" class="btn bg bsm" onclick="copyMD()">&#8860; Rentry MD</button>';
+    h += '<button class="btn bp bsm" onclick="openMod(\'addImg\')">+ Add Image</button>';
+    h += '<button class="btn bd bsm" onclick="openMod(\'confirmDel\')">Delete</button>';
+  } else {
+    h += '<button id="dl-btn" class="btn bg bsm" onclick="dl()">&#8595; Download</button>';
+    h += '<button class="btn bp bsm" onclick="openMod(\'addChar\')">+ New Character</button>';
+  }
+  h += '</div>';
+  return h;
+}
+
+function buildGrid(fl) {
+  var h = '<div class="search-row"><input id="srch" class="srch" placeholder="Search characters..." value="'+esc(q)+'" oninput="q=this.value;render()">';
+  h += '<span class="cnt">'+fl.length+' character'+(fl.length!==1?'s':'')+'</span></div>';
+  if (!fl.length) {
+    h += '<div class="empty">';
+    if (q) h += '<div class="empty-t">No results for &ldquo;'+esc(q)+'&rdquo;</div><div class="empty-s">Try a different name.</div>';
+    else h += '<div class="empty-sym">&#9672;</div><div class="empty-t">Library is empty</div><div class="empty-s">Click &ldquo;+ New Character&rdquo; to get started.</div>';
+    h += '</div>';
+  } else {
+    h += '<div class="char-grid">';
+    fl.forEach(function(c) {
+      var t = c.images[0];
+      h += '<div class="char-card" onclick="pg=\''+c.id+'\';_en=false;render()">';
+      if (t) h += '<img data-s="'+esc(t.url)+'" class="char-thumb" alt="'+esc(c.name)+'" onerror="this.style.display=\'none\';this.nextSibling.style.display=\'flex\'">';
+      h += '<div class="char-ph" style="display:'+(t?'none':'flex')+'">&#9672;</div>';
+      h += '<div class="char-info"><div class="char-name">'+esc(c.name)+'</div><div class="char-ct">'+c.images.length+' image'+(c.images.length!==1?'s':'')+'</div></div></div>';
+    });
+    h += '</div>';
+  }
+  return h;
+}
+
+function buildDetail(cur) {
+  if (!cur) return '<div class="empty"><div class="empty-t">Not found.</div></div>';
+  if (!cur.images.length) return '<div class="empty"><div class="empty-sym">&#9633;</div><div class="empty-t">No images yet</div><div class="empty-s">Click &ldquo;+ Add Image&rdquo;.</div></div>';
+  var h = '<div class="img-grid">';
+  cur.images.forEach(function(img) {
+    h += '<div class="img-card"><div class="img-hdr"><span class="img-lbl">'+esc(img.label)+'</span>';
+    h += '<button class="img-del" onclick="delImg(\''+img.id+'\')" title="Remove">&#215;</button></div>';
+    h += '<img data-s="'+esc(img.url)+'" class="img-thumb" alt="'+esc(img.label)+'" onerror="this.style.display=\'none\';this.nextSibling.style.display=\'flex\'">';
+    h += '<div class="img-err" style="display:none">Failed to load</div></div>';
+  });
+  h += '</div>';
+  return h;
+}
+
+// ── MODAL RENDER ───────────────────────────────────
+function renderModal() {
+  if (!_mo) { document.getElementById('modal-root').innerHTML=''; return; }
+  var cur = pg ? chars[pg] : null;
+  var inner = _mo==='addChar'?modAddChar():_mo==='addImg'?modAddImg(cur):modConfirmDel(cur);
+  document.getElementById('modal-root').innerHTML =
+    '<div class="m-back" onclick="if(event.target===this)closeMod()"><div class="modal">'+inner+'</div></div>';
+  // Set image previews via JS (avoid large base64 in HTML attributes)
+  if (_mi) { var pe = document.getElementById('img-prev-el'); if(pe) pe.src=_mi; }
+  if (_mu) { var ue = document.getElementById('url-prev-el'); if(ue) ue.src=_mu; }
+  if (_mo==='addImg') setupImgListeners();
+  setTimeout(function(){
+    var fi = document.querySelector('#modal-root input:not([type=file])');
+    if (fi && document.activeElement!==fi) fi.focus();
+  }, 30);
+}
+
+function mhdr(t) {
+  return '<div class="m-hdr"><h2 class="m-title">'+esc(t)+'</h2><button class="m-x" onclick="closeMod()">&#215;</button></div>';
+}
+function modAddChar() {
+  return mhdr('New character')+
+    '<div class="field"><label>Name</label><input id="nc-i" class="inp" placeholder="e.g. John" onkeydown="if(event.key===\'Enter\')addChar()"></div>'+
+    '<div class="m-foot"><button class="btn bg" onclick="closeMod()">Cancel</button><button class="btn bp" onclick="addChar()">Create</button></div>';
+}
+function modAddImg(cur) {
+  var h = mhdr('Add image'+(cur?' \u2014 '+esc(cur.name):''));
+  h += '<div class="tab-row">';
+  [['device','From device'],['url','From URL'],['bulk','Bulk URLs']].forEach(function(t){
+    h += '<button class="tab'+(_mt===t[0]?' on':'')+'" onclick="setTab(\''+t[0]+'\')">'+t[1]+'</button>';
+  });
+  h += '</div>';
+  if (_mt==='device') {
+    if (_mi) {
+      h += '<div class="prev-wrap"><img id="img-prev-el" style="width:100%;max-height:180px;object-fit:cover;display:block"></div>';
+      h += '<button class="btn bg bsm" style="margin-bottom:14px" onclick="_mi=\'\';renderModal()">&#215; Clear</button>';
+    } else {
+      h += '<div id="dz" class="dz"><div class="dz-icon">&#8679;</div>';
+      h += '<div class="dz-txt">Click to browse, or drag an image here</div>';
+      h += '<div class="dz-hint">Right-click any image &rarr; Copy Image, then Ctrl+V / Cmd+V</div></div>';
+    }
+    h += lblField();
+    h += '<div class="m-foot"><button class="btn bg" onclick="closeMod()">Cancel</button>';
+    h += '<button id="add-btn" class="btn bp" onclick="addSingle()"'+(_mi?'':' disabled')+'>Add</button></div>';
+  }
+  if (_mt==='url') {
+    h += '<div class="field"><label>Image URL</label>';
+    h += '<input id="url-i" class="inp" placeholder="https://i.imgur.com/\u2026" value="'+esc(_mu)+'" oninput="onUrl(this.value)" onkeydown="if(event.key===\'Enter\')addSingle()"></div>';
+    h += '<div id="url-prev-wrap">'+(_mu.trim()?'<div class="url-prev"><img id="url-prev-el" style="width:100%;max-height:170px;object-fit:cover;display:block"></div>':'')+'</div>';
+    h += lblField();
+    h += '<div class="m-foot"><button class="btn bg" onclick="closeMod()">Cancel</button>';
+    h += '<button id="add-btn" class="btn bp" onclick="addSingle()"'+(_mu.trim()?'':' disabled')+'>Add</button></div>';
+  }
+  if (_mt==='bulk') {
+    var bc = _mb.split('\n').map(function(u){return u.trim();}).filter(Boolean).length;
+    h += '<div class="field"><label>URLs <span style="text-transform:none;letter-spacing:0;color:#4E4A6A">(one per line)</span></label>';
+    h += '<textarea id="bulk-ta" class="inp" placeholder="https://i.imgur.com/abc.jpg&#10;https://imgchest.com/\u2026" oninput="onBulk(this.value)">'+esc(_mb)+'</textarea>';
+    h += '<div id="bulk-note">'+(bc>0?'<span class="bulk-ct">'+bc+' image'+(bc!==1?'s':'')+' ready</span>':'<span class="bulk-note">Paste image URLs, one per line.</span>')+'</div></div>';
+    h += '<div class="m-foot"><button class="btn bg" onclick="closeMod()">Cancel</button>';
+    h += '<button id="add-btn" class="btn bp" onclick="addBulk()"'+(bc>0?'':' disabled')+'>Add '+(bc>0?bc:'')+' Image'+(bc!==1?'s':'')+'</button></div>';
+  }
+  return h;
+}
+function lblField() {
+  return '<div class="field"><label>Label <span style="text-transform:none;letter-spacing:0;color:#4E4A6A">(optional)</span></label>'+
+    '<input id="lbl-i" class="inp" placeholder="e.g. Combat, Casual\u2026" value="'+esc(_ml)+'" oninput="_ml=this.value"></div>';
+}
+function modConfirmDel(cur) {
+  return mhdr('Delete character?')+
+    '<p style="font-size:13px;color:#7A70A8;line-height:1.6;margin-bottom:4px">Delete <strong style="color:#E2DCF5">'+esc(cur?cur.name:'')+'</strong> and all '+(cur?cur.images.length:0)+' images? This cannot be undone.</p>'+
+    '<div class="m-foot"><button class="btn bg" onclick="closeMod()">Cancel</button><button class="btn bd" onclick="delChar()">Delete</button></div>';
+}
+function setupImgListeners() {
+  var dz = document.getElementById('dz');
+  if (dz) {
+    dz.onclick = function(){document.getElementById('file-input').click();};
+    dz.ondragover = function(e){e.preventDefault();dz.classList.add('over');};
+    dz.ondragleave = function(){dz.classList.remove('over');};
+    dz.ondrop = function(e){e.preventDefault();dz.classList.remove('over');handleImgFile(e.dataTransfer.files[0]);};
+  }
+  if (_mph) document.removeEventListener('paste',_mph);
+  _mph = async function(e) {
+    var items = Array.from((e.clipboardData||{}).items||[]);
+    var it = items.find(function(i){return i.type.startsWith('image/');});
+    if (!it) return;
+    var file = it.getAsFile();
+    if (!file) return;
+    try { var raw = await readFile(file); _mi = await compressImg(raw); _mt='device'; renderModal(); } catch(err){}
+  };
+  document.addEventListener('paste',_mph);
+}
+
+// ── MODAL EVENTS ───────────────────────────────────
+function openMod(type) { _mo=type;_mt='device';_mi='';_mu='';_mb='';_ml=''; renderModal(); }
+function closeMod() {
+  if (_mph) { document.removeEventListener('paste',_mph); _mph=null; }
+  _mo=null;_mi='';_mu='';_mb='';_ml='';
+  document.getElementById('modal-root').innerHTML='';
+}
+function setTab(t) { _mt=t; renderModal(); }
+function onUrl(val) {
+  _mu=val;
+  var w=document.getElementById('url-prev-wrap'), b=document.getElementById('add-btn');
+  if (w) {
+    if (val.trim()) {
+      w.innerHTML='<div class="url-prev"><img id="url-prev-el" style="width:100%;max-height:170px;object-fit:cover;display:block"></div>';
+      document.getElementById('url-prev-el').src=val.trim();
+    } else { w.innerHTML=''; }
+  }
+  if (b) b.disabled=!val.trim();
+}
+function onBulk(val) {
+  _mb=val;
+  var bc=val.split('\n').map(function(u){return u.trim();}).filter(Boolean).length;
+  var n=document.getElementById('bulk-note'),b=document.getElementById('add-btn');
+  if (n) n.innerHTML=bc>0?'<span class="bulk-ct">'+bc+' image'+(bc!==1?'s':'')+' ready</span>':'<span class="bulk-note">Paste image URLs, one per line.</span>';
+  if (b) { b.disabled=bc===0; b.textContent='Add '+(bc>0?bc:'')+' Image'+(bc!==1?'s':''); }
+}
+
+// ── NAVIGATION & NAME ──────────────────────────────
+function goBack() { pg=null;_en=false;render(); }
+function startEn() { _env=pg&&chars[pg]?chars[pg].name:'';_en=true;render(); setTimeout(function(){var el=document.getElementById('en-i');if(el)el.focus();},10); }
+function enKey(e) { if(e.key==='Enter')saveName(); if(e.key==='Escape'){_en=false;render();} }
+function saveName() { if(_env.trim()&&pg){chars[pg].name=_env.trim();save();} _en=false;render(); }
+
+// ── CRUD ───────────────────────────────────────────
+function addChar() {
+  var el=document.getElementById('nc-i');
+  if (!el||!el.value.trim()) return;
+  var id=genId();
+  chars[id]={id:id,name:el.value.trim(),images:[]};
+  save();closeMod();render();
+}
+function delChar() {
+  if (!pg) return;
+  delete chars[pg]; pg=null;
+  save();closeMod();render();
+}
+function delImg(imgId) {
+  if (!pg||!chars[pg]) return;
+  chars[pg].images=chars[pg].images.filter(function(i){return i.id!==imgId;});
+  save();render();
+}
+function addSingle() {
+  var src=_mt==='url'?_mu.trim():_mi;
+  if (!src||!pg) return;
+  var li=document.getElementById('lbl-i');
+  var lbl=(li?li.value.trim():'')||_ml.trim()||'Image';
+  chars[pg].images.push({id:genId(),label:lbl,url:src});
+  save();closeMod();render();
+}
+function addBulk() {
+  var ta=document.getElementById('bulk-ta');
+  var urls=((ta?ta.value:_mb)).split('\n').map(function(u){return u.trim();}).filter(Boolean);
+  if (!urls.length||!pg) return;
+  var base=chars[pg].images.length;
+  urls.forEach(function(url,i){
+    chars[pg].images.push({id:genId(),label:'Image '+(base+i+1),url:url});
+  });
+  save();closeMod();render();
+}
+
+// ── COPY & DOWNLOAD ────────────────────────────────
+function copyMD() {
+  var c=pg?chars[pg]:null; if(!c) return;
+  var md='## '+c.name+'\n\n'+c.images.map(function(i){
+    return '### '+i.label+'\n!['+i.label+']('+i.url+')';
+  }).join('\n\n');
+  var done=function(){
+    var btn=document.getElementById('md-btn');
+    if(btn){btn.innerHTML='&#10003; Copied!';btn.className=btn.className.replace('bg','bsuc');}
+    clearTimeout(_tmr);
+    _tmr=setTimeout(function(){
+      var b=document.getElementById('md-btn');
+      if(b){b.innerHTML='&#8860; Rentry MD';b.className=b.className.replace('bsuc','bg');}
+    },2500);
+  };
+  try {
+    navigator.clipboard.writeText(md).then(done).catch(function(){fbCopy(md);done();});
+  } catch(e) { fbCopy(md);done(); }
+}
+function fbCopy(txt) {
+  var ta=document.createElement('textarea');
+  ta.value=txt;ta.style.cssText='position:fixed;top:0;opacity:0';
+  document.body.appendChild(ta);ta.focus();ta.select();
+  try{document.execCommand('copy');}catch(e){}
+  document.body.removeChild(ta);
+}
+
+function dl() {
+  var newD=JSON.stringify({v:Date.now(),d:chars}).replace(/<\/script>/gi,'<\\/script>');
+  var src='<!DOCTYPE html>\n'+document.documentElement.outerHTML;
+  var out=src.replace(
+    /\/\* CHARLIB_DATA_START \*\/([\s\S]*?)\/\* CHARLIB_DATA_END \*\//,
+    '/* CHARLIB_DATA_START */\nvar __D__ = '+newD+';\n/* CHARLIB_DATA_END */'
+  );
+  var blob=new Blob([out],{type:'text/html'});
+  var url=URL.createObjectURL(blob);
+  var a=document.createElement('a');
+  a.href=url;a.download='character-library.html';a.click();
+  setTimeout(function(){URL.revokeObjectURL(url);},1000);
+  var btn=document.getElementById('dl-btn');
+  if(btn){
+    btn.innerHTML='&#10003; Saved!';btn.className=btn.className.replace('bg','bsuc');
+    clearTimeout(_tmr);
+    _tmr=setTimeout(function(){
+      var b=document.getElementById('dl-btn');
+      if(b){b.innerHTML='&#8595; Download';b.className=b.className.replace('bsuc','bg');}
+    },2000);
+  }
+}
+
+init();
+</script>
+</body>
+</html>
