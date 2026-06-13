@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
+<html lang="en"><head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Character Library</title>
@@ -101,7 +100,312 @@ textarea.inp{resize:vertical;min-height:110px;font-family:inherit;line-height:1.
 .lb-x{position:fixed;top:14px;right:18px;background:none;border:none;color:#E2DCF5;font-size:26px;cursor:pointer;opacity:.5;line-height:1;padding:0}
 .lb-x:hover{opacity:1}
 </style>
-</head>
+<style>.rdp {
+  --rdp-cell-size: 40px;
+  --rdp-accent-color: #0000ff;
+  --rdp-background-color: #e7edff;
+  --rdp-accent-color-dark: #3003e1;
+  --rdp-background-color-dark: #180270;
+  --rdp-outline: 2px solid var(--rdp-accent-color); /* Outline border for focused elements */
+  --rdp-outline-selected: 2px solid rgba(0, 0, 0, 0.75); /* Outline border for focused _and_ selected elements */
+
+  margin: 1em;
+}
+
+/* Hide elements for devices that are not screen readers */
+.rdp-vhidden {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+  background: transparent;
+  border: 0;
+  -moz-appearance: none;
+  -webkit-appearance: none;
+  appearance: none;
+  position: absolute !important;
+  top: 0;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  clip: rect(1px, 1px, 1px, 1px) !important;
+  border: 0 !important;
+}
+
+/* Buttons */
+.rdp-button_reset {
+  appearance: none;
+  position: relative;
+  margin: 0;
+  padding: 0;
+  cursor: default;
+  color: inherit;
+  outline: none;
+  background: none;
+  font: inherit;
+
+  -moz-appearance: none;
+  -webkit-appearance: none;
+}
+
+.rdp-button {
+  border: 2px solid transparent;
+}
+
+.rdp-button[disabled] {
+  opacity: 0.25;
+}
+
+.rdp-button:not([disabled]) {
+  cursor: pointer;
+}
+
+.rdp-button:focus:not([disabled]),
+.rdp-button:active:not([disabled]) {
+  color: inherit;
+  border: var(--rdp-outline);
+  background-color: var(--rdp-background-color);
+}
+
+.rdp-button:hover:not([disabled]) {
+  background-color: var(--rdp-background-color);
+}
+
+.rdp-months {
+  display: flex;
+}
+
+.rdp-month {
+  margin: 0 1em;
+}
+
+.rdp-month:first-child {
+  margin-left: 0;
+}
+
+.rdp-month:last-child {
+  margin-right: 0;
+}
+
+.rdp-table {
+  margin: 0;
+  max-width: calc(var(--rdp-cell-size) * 7);
+  border-collapse: collapse;
+}
+
+.rdp-with_weeknumber .rdp-table {
+  max-width: calc(var(--rdp-cell-size) * 8);
+  border-collapse: collapse;
+}
+
+.rdp-caption {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0;
+  text-align: left;
+}
+
+.rdp-multiple_months .rdp-caption {
+  position: relative;
+  display: block;
+  text-align: center;
+}
+
+.rdp-caption_dropdowns {
+  position: relative;
+  display: inline-flex;
+}
+
+.rdp-caption_label {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  margin: 0;
+  padding: 0 0.25em;
+  white-space: nowrap;
+  color: currentColor;
+  border: 0;
+  border: 2px solid transparent;
+  font-family: inherit;
+  font-size: 140%;
+  font-weight: bold;
+}
+
+.rdp-nav {
+  white-space: nowrap;
+}
+
+.rdp-multiple_months .rdp-caption_start .rdp-nav {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  transform: translateY(-50%);
+}
+
+.rdp-multiple_months .rdp-caption_end .rdp-nav {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  transform: translateY(-50%);
+}
+
+.rdp-nav_button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--rdp-cell-size);
+  height: var(--rdp-cell-size);
+  padding: 0.25em;
+  border-radius: 100%;
+}
+
+/* ---------- */
+/* Dropdowns  */
+/* ---------- */
+
+.rdp-dropdown_year,
+.rdp-dropdown_month {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.rdp-dropdown {
+  appearance: none;
+  position: absolute;
+  z-index: 2;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  cursor: inherit;
+  opacity: 0;
+  border: none;
+  background-color: transparent;
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+}
+
+.rdp-dropdown[disabled] {
+  opacity: unset;
+  color: unset;
+}
+
+.rdp-dropdown:focus:not([disabled]) + .rdp-caption_label,
+.rdp-dropdown:active:not([disabled]) + .rdp-caption_label {
+  border: var(--rdp-outline);
+  border-radius: 6px;
+  background-color: var(--rdp-background-color);
+}
+
+.rdp-dropdown_icon {
+  margin: 0 0 0 5px;
+}
+
+.rdp-head {
+  border: 0;
+}
+
+.rdp-head_row,
+.rdp-row {
+  height: 100%;
+}
+
+.rdp-head_cell {
+  vertical-align: middle;
+  text-transform: uppercase;
+  font-size: 0.75em;
+  font-weight: 700;
+  text-align: center;
+  height: 100%;
+  height: var(--rdp-cell-size);
+  padding: 0;
+}
+
+.rdp-tbody {
+  border: 0;
+}
+
+.rdp-tfoot {
+  margin: 0.5em;
+}
+
+.rdp-cell {
+  width: var(--rdp-cell-size);
+  height: 100%;
+  height: var(--rdp-cell-size);
+  padding: 0;
+  text-align: center;
+}
+
+.rdp-weeknumber {
+  font-size: 0.75em;
+}
+
+.rdp-weeknumber,
+.rdp-day {
+  display: flex;
+  overflow: hidden;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  width: var(--rdp-cell-size);
+  max-width: var(--rdp-cell-size);
+  height: var(--rdp-cell-size);
+  margin: 0;
+  border: 2px solid transparent;
+  border-radius: 100%;
+}
+
+.rdp-day_today:not(.rdp-day_outside) {
+  font-weight: bold;
+}
+
+.rdp-day_selected:not([disabled]),
+.rdp-day_selected:focus:not([disabled]),
+.rdp-day_selected:active:not([disabled]),
+.rdp-day_selected:hover:not([disabled]) {
+  color: white;
+  background-color: var(--rdp-accent-color);
+}
+
+.rdp-day_selected:focus:not([disabled]) {
+  border: var(--rdp-outline-selected);
+}
+
+.rdp:not([dir='rtl']) .rdp-day_range_start:not(.rdp-day_range_end) {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.rdp:not([dir='rtl']) .rdp-day_range_end:not(.rdp-day_range_start) {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+.rdp[dir='rtl'] .rdp-day_range_start:not(.rdp-day_range_end) {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+.rdp[dir='rtl'] .rdp-day_range_end:not(.rdp-day_range_start) {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.rdp-day_range_end.rdp-day_range_start {
+  border-radius: 100%;
+}
+
+.rdp-day_range_middle {
+  border-radius: 0;
+}
+</style></head>
 <body>
 <input type="file" id="file-input" accept="image/*" style="display:none">
 <div id="app"></div>
@@ -109,7 +413,7 @@ textarea.inp{resize:vertical;min-height:110px;font-family:inherit;line-height:1.
 <div id="lb-root"></div>
 <script>
 /* CHARLIB_DATA_START */
-var __D__ = {"v":0,"d":{}};
+var __D__ = {"v":1781385057422,"d":{"mqbk01s1y7sp2x":{"id":"mqbk01s1y7sp2x","name":"Kayel","images":[]},"mqctzv6gtldmdn":{"id":"mqctzv6gtldmdn","name":"Falco Lombardi","images":[]},"mqcuk3i21iz8ze":{"id":"mqcuk3i21iz8ze","name":"Tyson","images":[],"created":1781384871098},"mqcukei7v97qdp":{"id":"mqcukei7v97qdp","name":"Montgomery Gator","images":[],"created":1781384885359},"mqcukmzv7y1f6o":{"id":"mqcukmzv7y1f6o","name":"Springtrap","images":[],"created":1781384896364},"mqcuksdkbycqv3":{"id":"mqcuksdkbycqv3","name":"Boris","images":[],"created":1781384903337},"mqcukyhzhy8r7j":{"id":"mqcukyhzhy8r7j","name":"Bonnie","images":[],"created":1781384911271},"mqcul1w0rju8a4":{"id":"mqcul1w0rju8a4","name":"Krog","images":[],"created":1781384915664},"mqcul71bavyfmk":{"id":"mqcul71bavyfmk","name":"Glamrock Freddy","images":[],"created":1781384922335},"mqcula6ush0jue":{"id":"mqcula6ush0jue","name":"Baron","images":[],"created":1781384926422},"mqculczyxq3ys8":{"id":"mqculczyxq3ys8","name":"Hugh","images":[],"created":1781384930062},"mqculthrsawd84":{"id":"mqculthrsawd84","name":"Marshal","images":[],"created":1781384951439},"mqcum0e91s1e9r":{"id":"mqcum0e91s1e9r","name":"Damascus","images":[],"created":1781384960385},"mqcum3b2kx9x0x":{"id":"mqcum3b2kx9x0x","name":"Foxy","images":[],"created":1781384964158},"mqcum6ojs8pb3d":{"id":"mqcum6ojs8pb3d","name":"Death","images":[],"created":1781384968531},"mqcum9x9qt5730":{"id":"mqcum9x9qt5730","name":"Bruce","images":[],"created":1781384972733},"mqcumdunrbp2n7":{"id":"mqcumdunrbp2n7","name":"Bowser","images":[],"created":1781384977823},"mqcumhk7w5j4q0":{"id":"mqcumhk7w5j4q0","name":"Cane","images":[],"created":1781384982631},"mqcumkprg1drev":{"id":"mqcumkprg1drev","name":"Boss","images":[],"created":1781384986719},"mqcumng7y52au4":{"id":"mqcumng7y52au4","name":"Igor","images":[],"created":1781384990263},"mqcumri8o28cf2":{"id":"mqcumri8o28cf2","name":"Dante","images":[],"created":1781384995520},"mqcumx8htsq0un":{"id":"mqcumx8htsq0un","name":"Byron","images":[],"created":1781385002945},"mqcun03yz0pl6g":{"id":"mqcun03yz0pl6g","name":"Xulus","images":[],"created":1781385006670},"mqcun3d48nj663":{"id":"mqcun3d48nj663","name":"Ted","images":[],"created":1781385010888},"mqcun6d8xju8p9":{"id":"mqcun6d8xju8p9","name":"Moul","images":[],"created":1781385014780},"mqcun9eqiou6xn":{"id":"mqcun9eqiou6xn","name":"Nolan","images":[],"created":1781385018722},"mqcuneqnkznlk4":{"id":"mqcuneqnkznlk4","name":"Teodoro","images":[],"created":1781385025631},"mqcunjm9c631mz":{"id":"mqcunjm9c631mz","name":"Gansu","images":[],"created":1781385031953},"mqcunp7eb8ddbf":{"id":"mqcunp7eb8ddbf","name":"Boru","images":[],"created":1781385039194},"mqcuntgkuin3ow":{"id":"mqcuntgkuin3ow","name":"Nilam","images":[],"created":1781385044708},"mqcunwhh0cv4as":{"id":"mqcunwhh0cv4as","name":"Tasha","images":[],"created":1781385048629},"mqcuo0dg069i6q":{"id":"mqcuo0dg069i6q","name":"Bunett","images":[],"created":1781385053668}}};
 /* CHARLIB_DATA_END */
 
 // ── STATE ──────────────────────────────────────────
@@ -633,5 +937,6 @@ function dl(){
 
 init();
 </script>
-</body>
-</html>
+
+
+</body></html>
